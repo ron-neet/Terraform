@@ -1,0 +1,29 @@
+# Terraform provider plugins and working directories
+**/.terraform/
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+**/terraform.tfstate.d/
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Local variable files (may contain secrets)
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# Environment secrets
+.env
+.env.*
+
+# LocalStack data
+**/localstack-data/
+
+# Terraform override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

@@ -31,11 +31,6 @@ jobs:
           SERVICES: s3
           DEBUG: "0"
           LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
-        options: >-
-          --health-cmd "curl -f http://localhost:4566/_localstack/health || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
 
     defaults:
       run:
@@ -44,6 +39,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Wait for LocalStack
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:4566/_localstack/health >/dev/null; then
+              echo "LocalStack is ready!"
+              exit 0
+            fi
+
+            echo "Waiting for LocalStack..."
+            sleep 5
+          done
+
+          echo "LocalStack failed to become ready."
+          exit 1
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3

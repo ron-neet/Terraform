@@ -16,6 +16,12 @@ on:
       - ".github/workflows/terraform.yml"
 
   workflow_dispatch:
+    inputs:
+      confirm_apply:
+        description: "I approve applying Terraform changes to LocalStack"
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   terraform:
@@ -70,4 +76,11 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -input=false -no-color
+        run: terraform plan -input=false -no-color -out=tfplan
+
+      - name: Show Terraform Plan
+        run: terraform show -no-color tfplan
+
+      - name: Terraform Apply
+        if: github.event_name == 'workflow_dispatch' && inputs.confirm_apply == true
+        run: terraform apply -input=false -auto-approve tfplan
